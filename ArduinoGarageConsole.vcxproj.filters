@@ -26,16 +26,10 @@
     <ClInclude Include="Visual Micro\.ArduinoGarageConsole.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="c:\Program Files (x86)\Arduino\libraries\TFT\TFT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="c:\Program Files (x86)\Arduino\hardware\tools\avr\avr\include\stdint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Program Files (x86)\Arduino\libraries\MemoryFree\MemoryFree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="c:\Program Files (x86)\Arduino\libraries\TouchScreen\TouchScreen.h">
+    <ClInclude Include="Visual Micro\.GarageDuino.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

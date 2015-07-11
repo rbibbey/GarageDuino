@@ -18,13 +18,18 @@ This is where the Arduino program's setup and main loop live
 #define TEMP_PIN A4
 #define RELAY_PIN A5
 
+#define STMPE_CS 8
+#define TFT_DC 9
+#define TFT_CS 10
+
 const long LCD_TIMEOUT = 30000;
 
 int loopCount = 0;
 int lastTemp = 0;
 long lastTouch = 0;
+int lastButton = 0;			//0 = None; 1 = Left; 2 = Middle; 3 = Right;
 long buttonPressed = 0;
-long buttonHoldTime = 1000;
+long buttonHoldTime = 500;
 
 void setup()
 {
@@ -40,6 +45,11 @@ void setup()
 	{
 		pinMode(0, OUTPUT);
 		initScreen();
+	}
+
+	if (TOUCH_ENABLED)
+	{
+		initTouch();
 	}
 }
 
@@ -79,11 +89,13 @@ void loop()
 
 			currentTemp = lastTemp;
 
-			if (currentTemp < 79)
+			if (currentTemp < 102)
 				currentTemp++;
+			else
+				currentTemp = 200;
 		}
 
-		if (currentTemp != lastTemp && abs(currentTemp-lastTemp) < 5)		//Only display changes if difference between temp reads is less than a 5 degree swing
+		if (currentTemp != lastTemp && abs(currentTemp-lastTemp) < 99)		//Only display changes if difference between temp reads is less than a 5 degree swing
 		{
 			lastTemp = currentTemp;
 
@@ -112,45 +124,56 @@ void loop()
 		strcat(zMessage, zReading);
 		logInfo(zMessage);
 
-		if (pressDetected)
+		if (pressDetected() == true && lastButton == 0)
 		{
 			logInfo("Screen press detected...");
 			lastTouch = millis();
 
-			if (x >= 130 && x <= 230)
+			if (x >= 120 && x <= 200)
 			{
 				//touch received in range of buttons
 
 				// if y between 20-100, then right button
 				// if y between 120-200 the middle button
 				// if y between 220-300 then left button
-				if (y > 10 && y < 110)
+				if (y > 20 && y < 100)
 				{
 					buttonPressed = millis();
+					lastButton = 3;
 					drawRightButton(true);
 					logInfo("Right button pressed...");
 				}
 
-				if (y > 110 && y < 210)
+				if (y > 120 && y < 200)
 				{
 					buttonPressed = millis();
+					lastButton = 2;
 					drawMiddleButton(true);
 					logInfo("Middle button pressed...");
 				}
 
-				if (y > 210 && y < 310)
+				if (y > 220 && y < 300)
 				{
 					buttonPressed = millis();
+					lastButton = 1;
 					drawLeftButton(true);
 					logInfo("Left button pressed...");
 				}
 			}
 		}
-
-		if (buttonPressed > 0 && millis() > buttonPressed + buttonHoldTime)
+		else
 		{
-			buttonPressed = 0;
-			drawButtons(false);
+			if (buttonPressed > 0 && millis() > buttonPressed + buttonHoldTime)
+			{
+				buttonPressed = 0;
+				
+				if (lastButton == 1) drawLeftButton(false);
+				if (lastButton == 2) drawMiddleButton(false);
+				if (lastButton == 3) drawRightButton(false);
+				//drawButtons(false);
+
+				lastButton = 0;
+			}
 		}
 
 		char touchString[50];
@@ -170,5 +193,5 @@ void loop()
 	}
 
 	loopCount++;
-	delay(100);
+	//delay(100);
 }

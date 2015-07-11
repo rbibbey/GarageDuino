@@ -5,7 +5,7 @@ Original Author: Ryan Bibbey (mail@ryanbibbey.com)
 Serial Logger Helper Functions
 */
 
-#include <MemoryFree.h>
+#include "MemoryFree\MemoryFree.h"
 
 void initSerialLogger()
 {

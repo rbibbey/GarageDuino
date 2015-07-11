@@ -5,8 +5,7 @@ Original Author: Ryan Bibbey (mail@ryanbibbey.com)
 Touch Screen Functions
 */
 
-#include <stdint.h>
-#include "TouchScreen.h"
+#include "Adafruit_STMPE610\Adafruit_STMPE610.h"
 
 #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) // mega
 #define YP A2   // must be an analog pin, use "An" notation!
@@ -34,18 +33,20 @@ Touch Screen Functions
 //TS_MAXX corresponds to ADC value when X = 240 -1
 //TS_MAXY corresponds to ADC value when Y = 320 -1
 
-#define TS_MINX 140
-#define TS_MAXX 900
-#define TS_MINY 120
-#define TS_MAXY 940
+#define TS_MINX 150
+#define TS_MAXX 3800
+#define TS_MINY 130
+#define TS_MAXY 4000
 
-TouchScreen tch = TouchScreen(XP, YP, XM, YM, 360);
-Point point;
+Adafruit_STMPE610 tch = Adafruit_STMPE610(STMPE_CS);
+//TouchScreen tch = TouchScreen(XP, YP, XM, YM, 360);
+TS_Point point;
 long pointTime;
 
 void initTouch()
 {
-
+	if (!tch.begin())
+		logInfo("Error initializing the touch screen!");
 }
 
 void getPoint()
@@ -56,7 +57,7 @@ void getPoint()
 
 bool pressDetected()
 {
-	return point.z > tch.pressureThreshhold;
+	return !tch.bufferEmpty();
 }
 
 int getZ()
@@ -66,10 +67,10 @@ int getZ()
 
 int mapX()
 {
-	return map(point.x, TS_MINX, TS_MAXX, 240, 0);
+	return map(point.x, TS_MINX, TS_MAXX, 0, 240);
 }
 
 int mapY()
 {
-	return map(point.y, TS_MINY, TS_MAXY, 320, 0);
+	return map(point.y, TS_MINY, TS_MAXY, 0, 320);
 }
